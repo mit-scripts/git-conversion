@@ -1,0 +1,47 @@
+#!/bin/sh
+set -eu
+usage="Usage: $0 REPO OUT"
+repo="${1:?$usage}"
+out="${2:?$usage}"
+here="$(readlink -f "$(dirname "$0")")"
+tmp="$(mktemp -dt git-conversion.XXXXXX)"
+trap 'rm -rf "$tmp"' EXIT
+(cd "$repo"; "$here/reposurgeon/repotool" export) > "$tmp/scripts.svn"
+patch -f -r - "$tmp/scripts.svn" < "$here/scripts.svn.patch"
+perl -0 -pe '
+    s/^(Node-(?:copyfrom-)?path: )(?!trunk|branches|tags)/$1root\//gm;
+    s/^(Node-(?:copyfrom-)?path: root)\/$/$1/gm;
+    s/^(Revision-number: 1)$/Node-path: root\nNode-kind: dir\nNode-action: add\nProp-content-length: 10\nContent-length: 10\n\nPROPS-END\n\n\1/m;
+    ' "$tmp/scripts.svn" \
+    | svndumpfilter exclude --skip-missing-merge-sources --pattern 'trunk/locker*' 'branches/*/locker*' 'tags/*/locker*' 'root/locker*' 'branches/locker-dev*' \
+    > "$tmp/scripts.renamed.svn"
+"$here/reposurgeon/reposurgeon" \
+    "verbose 1" \
+    "branchify trunk tags/* branches/* root" \
+    "read <$tmp/scripts.renamed.svn" \
+    "authors read <$here/scripts.map" \
+    "sourcetype svn" \
+    "prefer git" \
+    "<1119> remove .gitignore" \
+    "<1119> delete --tagback" \
+    "<1120> delete" \
+    "<1175>,<1178>|<1179> reparent --use-order" \
+    "<1197>,<1195>|<1198> reparent --use-order" \
+    "<1206>,<1209>|<1210> reparent --use-order" \
+    "<1218>,<1219>|<1220> reparent --use-order" \
+    "<1683>|<1684> reparent --use-order" \
+    "<1672>,<1671>|<1675> reparent --use-order" \
+    "<1691>,<1682>|<1693> reparent --use-order" \
+    "<2489>|<2495> reparent --use-order" \
+    "write --legacy >$tmp/scripts.fi"
+rm -fr "$out"
+"$here/reposurgeon/reposurgeon" \
+    "read <$tmp/scripts.fi" \
+    "prefer git" \
+    "rebuild $out"
+(
+    cd "$out"
+    git tag --points-at emptycommit-127^0 | xargs git tag -d
+    git tag -d emptycommit-1791 emptycommit-2287 emptycommit-2370 emptycommit-2381
+    git branch -d root
+)

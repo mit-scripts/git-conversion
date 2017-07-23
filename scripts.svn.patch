@@ -1,6 +1,57 @@
---- scripts.svn	2017-03-12 16:33:21.044905128 -0400
-+++ scripts.patched.svn	2017-03-12 16:34:01.152086846 -0400
-@@ -724984,10 +724984,23 @@
+--- scripts.svn	2017-07-22 22:59:14.924534979 -0400
++++ scripts.patched.svn	2017-07-23 00:06:29.709069598 -0400
+@@ -42728,22 +42728,22 @@
+ Node-path: locker/bin/ssh
+ Node-kind: file
+ Node-action: change
+-Text-content-md5: 29e4f47f8a917125a8f9d7c2cbd953dd
+-Text-content-sha1: 00079eaaa933998f9bb9f25924049588209fb0cc
+-Text-content-length: 29
+-Content-length: 29
++Text-content-md5: 19fdd062a9dd72606152cbf0bf646517
++Text-content-sha1: 7ded0ab8ddcf579bdfd90d79ef2b8a83d42a5738
++Text-content-length: 24
++Content-length: 24
+ 
+-link /mit/scripts/ssh/bin/ssh
++/mit/scripts/ssh/bin/ssh
+ 
+ Node-path: locker/bin/sshmic
+ Node-kind: file
+ Node-action: change
+-Text-content-md5: 29e4f47f8a917125a8f9d7c2cbd953dd
+-Text-content-sha1: 00079eaaa933998f9bb9f25924049588209fb0cc
+-Text-content-length: 29
+-Content-length: 29
++Text-content-md5: 19fdd062a9dd72606152cbf0bf646517
++Text-content-sha1: 7ded0ab8ddcf579bdfd90d79ef2b8a83d42a5738
++Text-content-length: 24
++Content-length: 24
+ 
+-link /mit/scripts/ssh/bin/ssh
++/mit/scripts/ssh/bin/ssh
+ 
+ Revision-number: 130
+ Prop-content-length: 130
+@@ -176077,12 +176077,12 @@
+ Node-path: locker/bin/sshmic
+ Node-kind: file
+ Node-action: change
+-Text-content-md5: 2c5ecc1acd663051bed605cd9855c9f4
+-Text-content-sha1: 2e97863ffebfd5e87a911bc414179387416753be
+-Text-content-length: 8
+-Content-length: 8
++Text-content-md5: 1787d7646304c5d987cf4e64a3973dc7
++Text-content-sha1: e8b9f665f844bf5da8294a1282fd740a4b17d2a6
++Text-content-length: 3
++Content-length: 3
+ 
+-link ssh
++ssh
+ 
+ Revision-number: 794
+ Prop-content-length: 137
+@@ -724977,10 +724977,23 @@
  Node-path: trunk/server/common/oursrc/accountadm/get-homedirs
  Node-kind: file
  Node-action: add
@@ -28,7 +79,7 @@
  
  
  Revision-number: 2300
-@@ -896269,28 +896282,26 @@
+@@ -896262,28 +896275,26 @@
  Node-path: trunk/locker/sbin/vhosteditat
  Node-kind: file
  Node-action: add

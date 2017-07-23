@@ -26,13 +26,18 @@ perl -0 -pe '
     "authors read <$here/scripts.map" \
     "sourcetype svn" \
     "prefer git" \
+    "blob </dev/null" \
+    "<923> add M 644 :1 server/common/oursrc/scripts-base/.keep" \
+    "<950> add M 644 :1 server/common/oursrc/nss-ldapd/.keep" \
     "<1119> remove .gitignore" \
     "<1119> delete --tagback" \
     "<1120> delete" \
+    "<1294> add D server/common/oursrc/nss-ldapd/.keep" \
     "<1178>|<1179> merge" \
     "<1195>|<1198> merge" \
     "<1209>|<1210> merge" \
     "<1219>|<1220> merge" \
+    "<1503> add M 644 :1 server/common/oursrc/scripts-wizard/.keep" \
     "<1684> unmerge" \
     "<1673>,<1674> squash" \
     "<1693> unmerge" \
@@ -66,6 +71,11 @@ perl -0 -pe '
     "sourcetype svn" \
     "prefer git" \
     "paths sup locker" \
+    "blob <$here/ignore-all" \
+    "<359> add M 644 :1 cron/servers/.gitignore" \
+    "<359> add M 644 :1 cron/server-crontabs/.gitignore" \
+    "<359> add M 644 :1 cron/lock/.gitignore" \
+    "<359> add M 644 :1 cron/crontabs/.gitignore" \
     "<1119> remove .gitignore" \
     "<1119> delete --tagback" \
     "<1120> delete" \

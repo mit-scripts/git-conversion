@@ -1,0 +1,124 @@
+--- scripts.svn	2017-07-23 00:39:20.908125745 -0400
++++ scripts.patched.svn	2017-07-23 01:18:24.016139375 -0400
+@@ -42746,22 +42746,22 @@
+ Node-path: locker/bin/ssh
+ Node-kind: file
+ Node-action: change
+-Text-content-length: 29
+-Text-content-md5: 29e4f47f8a917125a8f9d7c2cbd953dd
+-Text-content-sha1: 00079eaaa933998f9bb9f25924049588209fb0cc
+-Content-length: 29
++Text-content-length: 24
++Text-content-md5: 19fdd062a9dd72606152cbf0bf646517
++Text-content-sha1: 7ded0ab8ddcf579bdfd90d79ef2b8a83d42a5738
++Content-length: 24
+ 
+-link /mit/scripts/ssh/bin/ssh
++/mit/scripts/ssh/bin/ssh
+ 
+ Node-path: locker/bin/sshmic
+ Node-kind: file
+ Node-action: change
+-Text-content-length: 29
+-Text-content-md5: 29e4f47f8a917125a8f9d7c2cbd953dd
+-Text-content-sha1: 00079eaaa933998f9bb9f25924049588209fb0cc
+-Content-length: 29
++Text-content-length: 24
++Text-content-md5: 19fdd062a9dd72606152cbf0bf646517
++Text-content-sha1: 7ded0ab8ddcf579bdfd90d79ef2b8a83d42a5738
++Content-length: 24
+ 
+-link /mit/scripts/ssh/bin/ssh
++/mit/scripts/ssh/bin/ssh
+ 
+ Revision-number: 130
+ Prop-content-length: 130
+@@ -176095,12 +176095,12 @@
+ Node-path: locker/bin/sshmic
+ Node-kind: file
+ Node-action: change
+-Text-content-length: 8
+-Text-content-md5: 2c5ecc1acd663051bed605cd9855c9f4
+-Text-content-sha1: 2e97863ffebfd5e87a911bc414179387416753be
+-Content-length: 8
++Text-content-length: 3
++Text-content-md5: 1787d7646304c5d987cf4e64a3973dc7
++Text-content-sha1: e8b9f665f844bf5da8294a1282fd740a4b17d2a6
++Content-length: 3
+ 
+-link ssh
++ssh
+ 
+ Revision-number: 794
+ Prop-content-length: 137
+@@ -725031,10 +725031,23 @@
+ Node-path: trunk/server/common/oursrc/accountadm/get-homedirs
+ Node-kind: file
+ Node-action: add
+-Node-copyfrom-rev: 2289
+-Node-copyfrom-path: trunk/locker/sbin/get-homedirs.sh
+-Text-copy-source-md5: e21a9e03486cdc64ed919ca1176cbbc9
+-Text-copy-source-sha1: c25b6e953bbfd37c220e436d318e327dfbb8ee56
++Text-content-md5: e21a9e03486cdc64ed919ca1176cbbc9
++Text-content-sha1: c25b6e953bbfd37c220e436d318e327dfbb8ee56
++Prop-content-length: 36
++Text-content-length: 273
++Content-length: 309
++
++K 14
++svn:executable
++V 1
++*
++PROPS-END
++#!/bin/sh
++
++# Run this as root on scripts.
++
++/usr/bin/ldapsearch -LLL -z 0 -b ou=People,dc=scripts,dc=mit,dc=edu -s one -x -D 'cn=Directory Manager' -y /etc/signup-ldap-pw '' cn homeDirectory | \
++	perl -0pe 's/\n //g; s/^dn: .*\ncn: (.*)\nhomeDirectory: (.*)\n\n/$1 $2\n/gm'
+ 
+ 
+ Revision-number: 2300
+@@ -896316,28 +896329,26 @@
+ Node-path: trunk/locker/sbin/vhosteditat
+ Node-kind: file
+ Node-action: add
+-Node-copyfrom-rev: 2816
+-Node-copyfrom-path: branches/fc20-dev/locker/sbin/vhosteditat
+-Text-copy-source-md5: c002e15d6be7f667456920155e217aae
+-Text-copy-source-sha1: 15985f234482cb0206fb04212b942cafe03f3df0
+-Prop-content-length: 467
+-Content-length: 467
++Text-content-md5: c002e15d6be7f667456920155e217aae
++Text-content-sha1: 15985f234482cb0206fb04212b942cafe03f3df0
++Prop-content-length: 36
++Text-content-length: 308
++Content-length: 344
+ 
+ K 14
+ svn:executable
+ V 1
+ *
+-K 13
+-svn:mergeinfo
+-V 405
+-/branches/fc11-dev/locker/sbin/vhosteditat:1121-1258
+-/branches/fc13-dev/locker/sbin/vhosteditat:1613-1692
+-/branches/fc15-dev/locker/sbin/vhosteditat:1803-2065
+-/branches/fc17-dev/locker/sbin/vhosteditat:2081-2245
+-/branches/fc19-dev/locker/sbin/vhosteditat:2523-2527
+-/branches/locker-dev/locker/sbin/vhosteditat:1221-2149,2259-2281,2284-2285,2309,2311,2314,2369,2380
+-/trunk/locker/sbin/vhosteditat:2402-2575
+ PROPS-END
++#!/bin/sh
++
++if [ ! "$2" ]; then
++    echo "Usage: $0 <vhost>"
++    exit 2
++fi
++
++exec ldapvi --bind sasl -Y GSSAPI -h $1 -b dc=scripts,dc=mit,dc=edu \
++       "(|(&(objectClass=apacheConfig)(|(apacheServerName=$2)(apacheServerAlias=$2)))(&(objectClass=scriptsVhost)(|(scriptsVhostName=$2)(scriptsVhostAlias=$2))))"
+ 
+ 
+ Revision-number: 2818

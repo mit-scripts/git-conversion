@@ -10,7 +10,10 @@ tmp="$(mktemp -dt git-conversion.XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
 (cd "$repo"; "$here/reposurgeon/repotool" export) > "$tmp/scripts.svn"
-patch -f -r - "$tmp/scripts.svn" < "$here/scripts.svn.patch"
+patch -f -r - "$tmp/scripts.svn" < "$here/scripts.svn.patch" || {
+    mv "$tmp/scripts.svn.orig" "$tmp/scripts.svn"
+    patch -f -r - "$tmp/scripts.svn" < "$here/scripts.svn.patch.alt"
+}
 
 perl -0 -pe '
     s/^(Node-(?:copyfrom-)?path: )(?!trunk|branches|tags)/$1root\//gm;

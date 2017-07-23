@@ -1,13 +1,17 @@
 #!/bin/sh
 set -eu
-usage="Usage: $0 REPO OUT"
+usage="Usage: $0 REPO OUT OUT_LOCKER"
 repo="${1:?$usage}"
 out="${2:?$usage}"
+out_locker="${3:?$usage}"
+
 here="$(readlink -f "$(dirname "$0")")"
 tmp="$(mktemp -dt git-conversion.XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
+
 (cd "$repo"; "$here/reposurgeon/repotool" export) > "$tmp/scripts.svn"
 patch -f -r - "$tmp/scripts.svn" < "$here/scripts.svn.patch"
+
 perl -0 -pe '
     s/^(Node-(?:copyfrom-)?path: )(?!trunk|branches|tags)/$1root\//gm;
     s/^(Node-(?:copyfrom-)?path: root)\/$/$1/gm;
@@ -45,4 +49,58 @@ rm -fr "$out"
     git tag --points-at emptycommit-127^0 | xargs git tag -d
     git tag -d emptycommit-1791 emptycommit-2287 emptycommit-2370 emptycommit-2381
     git branch -d root
+)
+
+perl -0 -pe '
+    s/^(Node-(?:copyfrom-)?path: )(?!trunk|branches|tags)/$1root\//gm;
+    s/^(Node-(?:copyfrom-)?path: root)\/$/$1/gm;
+    s/^(Revision-number: 1)$/Node-path: root\nNode-kind: dir\nNode-action: add\nProp-content-length: 10\nContent-length: 10\n\nPROPS-END\n\n\1/m;
+    ' "$tmp/scripts.svn" \
+    | svndumpfilter include --skip-missing-merge-sources --pattern 'trunk' 'trunk/locker*' 'branches/locker-dev' 'branches/locker-dev/locker*' 'root' 'root/locker*' \
+    > "$tmp/scripts-locker.renamed.svn"
+"$here/reposurgeon/reposurgeon" \
+    "verbose 1" \
+    "branchify trunk tags/* branches/* root" \
+    "read <$tmp/scripts-locker.renamed.svn" \
+    "authors read <$here/scripts.map" \
+    "sourcetype svn" \
+    "prefer git" \
+    "paths sup locker" \
+    "<1119> remove .gitignore" \
+    "<1119> delete --tagback" \
+    "<1120> delete" \
+    "<1259> delete" \
+    "<1262> unmerge" \
+    "<1404> unmerge" \
+    "<1415> squash --pushback" \
+    "<1547> unmerge" \
+    "<1548> unmerge" \
+    "<1550> unmerge" \
+    "<1693> delete" \
+    "<1697> delete" \
+    "<1698> delete" \
+    "<1724> unmerge" \
+    "<1730> unmerge" \
+    "<1791> unmerge" \
+    "<2066> delete" \
+    "<2246> delete" \
+    "<2591> delete" \
+    "<2253> remove etc/known_hosts" \
+    "<2253> delete" \
+    "<2286> unmerge" \
+    "<2309>|<2310> merge" \
+    "<2311>|<2312> merge" \
+    "<2314>|<2319> merge" \
+    "<2369>|<2370> merge" \
+    "<2380>|<2381> merge" \
+    "write --legacy >$tmp/scripts-locker.fi"
+rm -fr "$out_locker"
+"$here/reposurgeon/reposurgeon" \
+    "read <$tmp/scripts-locker.fi" \
+    "prefer git" \
+    "rebuild $out_locker"
+(
+    cd "$out_locker"
+    git branch -d root
+    git branch -D locker-dev
 )

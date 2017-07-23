@@ -28,3 +28,46 @@
  
  
  Revision-number: 2300
+@@ -896269,28 +896282,26 @@
+ Node-path: trunk/locker/sbin/vhosteditat
+ Node-kind: file
+ Node-action: add
+-Node-copyfrom-rev: 2816
+-Node-copyfrom-path: branches/fc20-dev/locker/sbin/vhosteditat
+-Text-copy-source-md5: c002e15d6be7f667456920155e217aae
+-Text-copy-source-sha1: 15985f234482cb0206fb04212b942cafe03f3df0
+-Prop-content-length: 467
+-Content-length: 467
++Text-content-md5: c002e15d6be7f667456920155e217aae
++Text-content-sha1: 15985f234482cb0206fb04212b942cafe03f3df0
++Prop-content-length: 36
++Text-content-length: 308
++Content-length: 344
+ 
+ K 14
+ svn:executable
+ V 1
+ *
+-K 13
+-svn:mergeinfo
+-V 405
+-/branches/fc11-dev/locker/sbin/vhosteditat:1121-1258
+-/branches/fc13-dev/locker/sbin/vhosteditat:1613-1692
+-/branches/fc15-dev/locker/sbin/vhosteditat:1803-2065
+-/branches/fc17-dev/locker/sbin/vhosteditat:2081-2245
+-/branches/fc19-dev/locker/sbin/vhosteditat:2523-2527
+-/branches/locker-dev/locker/sbin/vhosteditat:1221-2149,2259-2281,2284-2285,2309,2311,2314,2369,2380
+-/trunk/locker/sbin/vhosteditat:2402-2575
+ PROPS-END
++#!/bin/sh
++
++if [ ! "$2" ]; then
++    echo "Usage: $0 <vhost>"
++    exit 2
++fi
++
++exec ldapvi --bind sasl -Y GSSAPI -h $1 -b dc=scripts,dc=mit,dc=edu \
++       "(|(&(objectClass=apacheConfig)(|(apacheServerName=$2)(apacheServerAlias=$2)))(&(objectClass=scriptsVhost)(|(scriptsVhostName=$2)(scriptsVhostAlias=$2))))"
+ 
+ 
+ Revision-number: 2818
